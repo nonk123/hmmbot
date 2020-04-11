@@ -28,11 +28,14 @@ def parse_vgs():
 
     vgs = {}
 
-    pq = PyQuery(url="https://tribes.fandom.com/wiki/Voice_Game_System")
+    pq = PyQuery(url="http://wiki.theexiled.pwnageservers.com/Tribes:_Ascend/Voice_Game_System")
 
-    for row in pq("h2 + table.wikitable > tr"):
-        shortcut = PyQuery(row).find("td").eq(0).text()
-        command = PyQuery(row).find("td").eq(1).text()
+    for line in pq("h2 + dl > dd:not(:parent), h2 + dl > dd > dl > dd").items():
+        split = line.text().split("] ", 2)
+
+        shortcut = split[0][1:]
+        command = split[1].rstrip()
+
         vgs["^%s$" % shortcut] = command
 
     return vgs
