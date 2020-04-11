@@ -6,6 +6,9 @@ import os.path
 import json
 import re
 
+import logging
+logging.basicConfig(level=logging.INFO)
+
 respond_to = {
     r"^test": "test?",
     r"^ping": "pong!",
