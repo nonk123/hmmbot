@@ -19,7 +19,8 @@ respond_to = {
     r"^[,.?!:;\^$\[\](){}\-+=_%#@*/\\]+$": "?",
     r"^brb|^gtg|^afk,? +eating": "meh",
     r"^back": "meh",
-    r"^ready|ready$": "no, you're not"
+    r"^ready|ready$": "no, you're not",
+    r"^well": "well?"
 }
 
 def parse_vgs():
