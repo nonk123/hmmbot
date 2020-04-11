@@ -17,7 +17,7 @@ respond_to = {
     r"^meh": "meh",
     r"^hem": "hem",
     r"^[,.?!:;\^$\[\](){}\-+=_%#@*/\\]+$": "?",
-    r"^brb|brb$|^gtg|gtg$|^afk,? +eating": "meh",
+    r"^brb|^gtg|^afk,? +eating": "meh",
     r"^back": "meh",
     r"^ready|ready$": "no, you're not"
 }
