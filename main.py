@@ -13,10 +13,13 @@ respond_to = {
     r"^test": "test?",
     r"^ping": "pong!",
     r"^pong": "ping?",
-    r"^hm+": "hmm?",
+    r"^hr?m+([^m]|$)": "hmm?",
     r"^meh": "meh",
     r"^hem": "hem",
-    r"^[,.?!:;\^$\[\](){}\-+=_%#@*/\\]+$": "?"
+    r"^[,.?!:;\^$\[\](){}\-+=_%#@*/\\]+$": "?",
+    r"^brb|brb$|^gtg|gtg$|^afk,? +eating": "meh",
+    r"^back": "meh",
+    r"^ready|ready$": "no, you're not"
 }
 
 class HmmBot(discord.Client):
