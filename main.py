@@ -18,7 +18,7 @@ class HmmBot(discord.Client):
             r"[Hh]m+[!?]*": "hmm?",
             r"[Mm]eh\??": "meh",
             r"[Hh]em\??": "hem",
-            r"[!?]+": "?"
+            r"[.,!?]+": "?"
         }
 
         for response_regexp, response in respond_to.items():
