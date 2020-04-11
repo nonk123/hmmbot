@@ -6,6 +6,13 @@ import os.path
 import json
 import re
 
+respond_to = {
+    r"[Hh]m+[.,!?]*": "hmm?",
+    r"[Mm]eh[.,!?]*": "meh",
+    r"[Hh]em[.,!?]*": "hem",
+    r"[.,!?]+": "?"
+}
+
 class HmmBot(discord.Client):
     async def on_ready(self):
         print("Ready, I guess?")
@@ -13,13 +20,6 @@ class HmmBot(discord.Client):
     async def on_message(self, message):
         if message.author.id == self.user.id:
             return
-
-        respond_to = {
-            r"[Hh]m+[!?]*": "hmm?",
-            r"[Mm]eh\??": "meh",
-            r"[Hh]em\??": "hem",
-            r"[.,!?]+": "?"
-        }
 
         for response_regexp, response in respond_to.items():
             if re.match(response_regexp, message.content):
