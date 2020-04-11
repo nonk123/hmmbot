@@ -22,6 +22,22 @@ respond_to = {
     r"^ready|ready$": "no, you're not"
 }
 
+def parse_vgs():
+    from pyquery import PyQuery
+
+    vgs = {}
+
+    pq = PyQuery(url="https://tribes.fandom.com/wiki/Voice_Game_System")
+
+    for row in pq("h2 + table.wikitable > tr"):
+        shortcut = PyQuery(row).find("td").eq(0).text()
+        command = PyQuery(row).find("td").eq(1).text()
+        vgs["^%s$" % shortcut] = command
+
+    return vgs
+
+respond_to.update(parse_vgs())
+
 class HmmBot(discord.Client):
     async def on_ready(self):
         print("Ready, I guess?")
