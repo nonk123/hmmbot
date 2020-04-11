@@ -7,10 +7,13 @@ import json
 import re
 
 respond_to = {
-    r"[Hh]m+[.,!?]*": "hmm?",
-    r"[Mm]eh[.,!?]*": "meh",
-    r"[Hh]em[.,!?]*": "hem",
-    r"[.,!?]+": "?"
+    r"^test": "test?",
+    r"^ping": "pong!",
+    r"^pong": "ping?",
+    r"^hm+": "hmm?",
+    r"^meh": "meh",
+    r"^hem": "hem",
+    r"^[,.?!:;\^$\[\](){}\-+=_%#@*/\\]+$": "?"
 }
 
 class HmmBot(discord.Client):
@@ -22,7 +25,7 @@ class HmmBot(discord.Client):
             return
 
         for response_regexp, response in respond_to.items():
-            if re.match(response_regexp, message.content):
+            if re.search(response_regexp, message.content, re.IGNORECASE):
                 await message.channel.send(response)
 
 def main():
