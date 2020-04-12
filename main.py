@@ -47,6 +47,9 @@ respond_to.update(parse_vgs())
 
 class HmmBot(discord.Client):
     async def on_ready(self):
+        respond_to[fr"<@!?{self.user.id}>"] = "yes?"
+        respond_to[fr"<@!?(\d+(?<!{self.user.id}))>"] = "hmm?"
+
         print("Ready, I guess?")
 
     async def on_message(self, message):
