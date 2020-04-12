@@ -22,7 +22,8 @@ respond_to = {
     word("he+m"): "hem.",
     r"^[!-/:-@\[-`{-~]+$": "?",
     fr"{word('brb')}|{word('gtg')}|^afk(, *| +)eating|{word('back')}": "ok.",
-    r"^ready|ready$": "no, you're not."
+    r"^ready|ready$": "no, you're not.",
+    r"^\*\*.+\*\*$": "hmm?"
 }
 
 def parse_vgs():
