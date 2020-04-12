@@ -52,17 +52,16 @@ class HmmBot(discord.Client):
 
         print("Ready, I guess?")
 
+    def respond(self, content):
+        for response_regexp, response in respond_to.items():
+            for match in re.findall(response_regexp, content, re.IGNORECASE):
+                yield response(content) if callable(response) else response
+
     async def on_message(self, message):
         if message.author.id == self.user.id:
             return
 
-        responses = []
-
-        for response_regexp, response in respond_to.items():
-            matches = len(re.findall(response_regexp, message.content, re.IGNORECASE))
-
-            if matches > 0:
-                responses += [response for i in range(matches)]
+        responses = list(self.respond(message.content))
 
         if responses:
             await message.channel.send(" ".join(responses))
