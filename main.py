@@ -46,29 +46,20 @@ class HmmBot(discord.Client):
     async def on_ready(self):
         print("Ready, I guess?")
 
-    def split(self, content):
-        patterns = [r" *\| *", r" *(?:[.!?/\\\-]+|[@:;]) *"]
-
-        for pattern in patterns:
-            if re.search(pattern, content):
-                return re.split(pattern, content)
-
-        return [x.strip('"') for x in re.findall(r'".*?"', content)] or [content]
-
-    def respond(self, content):
-        for response_regexp, response in respond_to.items():
-            if re.search(response_regexp, content, re.IGNORECASE):
-                return response
-
     async def on_message(self, message):
         if message.author.id == self.user.id:
             return
 
-        responses = map(self.respond, self.split(message.content))
-        response = " ".join(s for s in responses if s)
+        responses = []
 
-        if response:
-            await message.channel.send(response)
+        for response_regexp, response in respond_to.items():
+            matches = len(re.findall(response_regexp, message.content, re.IGNORECASE))
+
+            if matches > 0:
+                responses += [response for i in range(matches)]
+
+        if responses:
+            await message.channel.send(" ".join(responses))
 
 def main():
     file = "config.json"
