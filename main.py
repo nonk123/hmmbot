@@ -38,7 +38,7 @@ def pick(content):
     if "|" in choices:
         choices = re.split(r" *\| *", choices)
     elif '"' in choices:
-        choices = re.findall(r'(?<=").*(?=")', choices)
+        choices = [s[1:-1] for s in re.findall(r'".*?"', choices)]
     else:
         choices = re.split(" +", choices)
 
