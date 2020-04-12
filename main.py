@@ -32,7 +32,7 @@ def parse_vgs():
 
     pq = PyQuery(url="http://wiki.theexiled.pwnageservers.com/Tribes:_Ascend/Voice_Game_System")
 
-    for line in pq("h2 + dl > dd:not(:parent), h2 + dl > dd > dl > dd").items():
+    for line in pq("{0}:not(:parent), {0} > dl > dd".format("h2 + dl > dd")).items():
         split = line.text().split("] ", 2)
 
         shortcut = split[0][1:]
