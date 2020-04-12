@@ -6,11 +6,19 @@ import os.path
 import json
 import re
 
+import random
+
 import logging
 logging.basicConfig(level=logging.INFO)
 
 def word(w):
     return "(?:^|{1}){0}(?={1}|$)".format(w, "[,.?!:; ]+")
+
+def ynm(content):
+    return random.choice(["yes.", "no.", "maybe."])
+
+modals = "((do|did|have|has|had|should)(n't)?|shall)"
+pronouns = "(I|you|he|she|it|we|they)"
 
 respond_to = {
     r"^test$": "test?",
@@ -23,7 +31,8 @@ respond_to = {
     r"^[!-/:-@\[-`{-~]+$": "?",
     fr"{word('brb')}|{word('gtg')}|^afk(, *| +)eating|{word('back')}": "ok.",
     r"^ready|ready$": "no, you're not.",
-    r"^\*\*.+\*\*$": "hmm?"
+    r"^\*\*.+\*\*$": "hmm?",
+    r"{} +{}".format(modals, pronouns): ynm
 }
 
 def parse_vgs():
