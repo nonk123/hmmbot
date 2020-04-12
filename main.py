@@ -32,7 +32,7 @@ respond_to = {
     fr"{word('brb')}|{word('gtg')}|^afk(, *| +)eating|{word('back')}": "ok.",
     r"^ready|ready$": "no, you're not.",
     r"^\*\*.+\*\*$": "hmm?",
-    r"{} +{}".format(modals, pronouns): ynm
+    fr"{modals} +{pronouns}": ynm
 }
 
 def parse_vgs():
