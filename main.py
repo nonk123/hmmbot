@@ -16,7 +16,7 @@ respond_to = {
     r"^test$": "test?",
     r"^ping$": "pong!",
     r"^pong$": "ping?",
-    word("well"): "well?",
+    r"^well([.?]*$|hr?m+$)": "well?",
     word("hr?m+"): "hmm?",
     word("me+h"): "meh.",
     word("he+m"): "hem.",
