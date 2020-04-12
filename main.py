@@ -30,8 +30,9 @@ respond_to = {
     word("me+h"): "meh.",
     word("he+m"): "hem.",
     r"^[ -/:-@\[-`{-~]+$": "?",
-    fr"{word('brb')}|{word('gtg')}|^afk(, *| +)eating|{word('back')}": "ok.",
+    fr"{word('brb')}|{word('gtg')}|^afk(, *| +)eating|^back(\b|$)": "ok.",
     r"^ready|ready$": "no, you're not.",
+    word("(fuck|fric[ck]) +you"): "no u",
     r"^\*\*.+\*\*$": "hmm?"
 }
 
