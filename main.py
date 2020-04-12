@@ -17,10 +17,39 @@ def word(w):
 def ynm(content):
     return random.choice(["yes.", "no.", "maybe."])
 
+pick_words = "(choose|pick|select)"
+pick_choices_pattern = f"(?:{pick_words}.*[:,] ?| )"
+pick_phrases = [
+    "i think i'll go with... {}.",
+    "hmm... {}, yes.",
+    "{} is the most meh option out of these; repick.",
+    "definitely not {}.",
+    "repick.",
+    "meh.",
+    "hmm?"
+]
+
+def pick(content):
+    choices = re.split(pick_choices_pattern, content, 2)[-1]
+
+    if not choices:
+        return "and what should i pick?"
+
+    if "|" in choices:
+        choices = re.split(r" *\| *", choices)
+    elif '"' in choices:
+        choices = re.findall(r'(?<=").*(?=")', choices)
+    else:
+        choices = re.split(" +", choices)
+
+    choice = "`%s`" % random.choice(choices)
+    return random.choice(pick_phrases).format(choice)
+
 modals = "((do|did|can|could|have|has|had|should)(n't)?|shall)"
 pronouns = "(I|you|he|she|it|we|they)"
 
 respond_to = {
+    fr"(^|.+,? +){pick_words}.*{pick_choices_pattern}": pick,
     fr"{modals} +{pronouns}|you +{modals}": ynm,
     r"^test$": "test?",
     r"^ping$": "pong!",
