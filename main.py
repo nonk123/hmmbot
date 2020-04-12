@@ -17,10 +17,11 @@ def word(w):
 def ynm(content):
     return random.choice(["yes.", "no.", "maybe."])
 
-modals = "((do|did|have|has|had|should)(n't)?|shall)"
+modals = "((do|did|can|could|have|has|had|should)(n't)?|shall)"
 pronouns = "(I|you|he|she|it|we|they)"
 
 respond_to = {
+    fr"{modals} +{pronouns}|you +{modals}": ynm,
     r"^test$": "test?",
     r"^ping$": "pong!",
     r"^pong$": "ping?",
@@ -31,8 +32,7 @@ respond_to = {
     r"^[ -/:-@\[-`{-~]+$": "?",
     fr"{word('brb')}|{word('gtg')}|^afk(, *| +)eating|{word('back')}": "ok.",
     r"^ready|ready$": "no, you're not.",
-    r"^\*\*.+\*\*$": "hmm?",
-    fr"{modals} +{pronouns}": ynm
+    r"^\*\*.+\*\*$": "hmm?"
 }
 
 def parse_vgs():
