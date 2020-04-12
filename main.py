@@ -35,7 +35,7 @@ def pick(content):
     choices = split[-1]
 
     if len(split) < 2 or not choices:
-        return "and what should i pick?"
+        return "and what should i pick? (tm)"
 
     if "|" in choices:
         choices = re.split(r" *\| *", choices)
