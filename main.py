@@ -26,7 +26,8 @@ pick_phrases = [
     "definitely not {}.",
     "repick.",
     "meh.",
-    "hmm?"
+    "hmm?",
+    "your question sucks."
 ]
 
 def pick(content):
