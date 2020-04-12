@@ -18,7 +18,7 @@ def ynm(content):
     return random.choice(["yes.", "no.", "maybe."])
 
 pick_words = "(choose|pick|select)"
-pick_choices_pattern = f"(?:{pick_words}.*[:,] ?| )"
+pick_choices_pattern = f"(?:{pick_words}.*: *)"
 pick_phrases = [
     "i think i'll go with... {}.",
     "hmm... {}, yes.",
@@ -31,9 +31,10 @@ pick_phrases = [
 ]
 
 def pick(content):
-    choices = re.split(pick_choices_pattern, content, 2)[-1]
+    split = re.split(pick_choices_pattern, content, 2)
+    choices = split[-1]
 
-    if not choices:
+    if len(split) < 2 or not choices:
         return "and what should i pick?"
 
     if "|" in choices:
@@ -50,7 +51,7 @@ modals = "((do|did|can|could|have|has|had|should)(n't)?|shall)"
 pronouns = "(I|you|he|she|it|we|they)"
 
 respond_to = {
-    fr"(^|.+,? +){pick_words}.*{pick_choices_pattern}": pick,
+    fr"(^|.+,? +){pick_words}": pick,
     fr"{modals} +{pronouns}|you +{modals}": ynm,
     r"^test$": "test?",
     r"^ping$": "pong!",
