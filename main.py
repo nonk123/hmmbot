@@ -9,18 +9,20 @@ import re
 import logging
 logging.basicConfig(level=logging.INFO)
 
+def word(w):
+    return "(?:^|{1}){0}(?={1}|$)".format(w, "[,.?!:; ]+")
+
 respond_to = {
-    r"^test": "test?",
-    r"^ping": "pong!",
-    r"^pong": "ping?",
-    r"^hr?m+([^m]|$)": "hmm?",
-    r"^me+h": "meh",
-    r"^he+m": "hem",
+    r"^test$": "test?",
+    r"^ping$": "pong!",
+    r"^pong$": "ping?",
+    word("well"): "well?",
+    word("hr?m+"): "hmm?",
+    word("me+h"): "meh.",
+    word("he+m"): "hem.",
     r"^[,.?!:;\^$\[\](){}\-+=_%#@*/\\]+$": "?",
-    r"^brb|^gtg|^afk,? +eating": "meh",
-    r"^back": "meh",
-    r"^ready|ready$": "no, you're not",
-    r"^well": "well?"
+    fr"{word('brb')}|{word('gtg')}|^afk(, *| +)eating|{word('back')}": "ok.",
+    r"^ready|ready$": "no, you're not."
 }
 
 def parse_vgs():
@@ -36,7 +38,7 @@ def parse_vgs():
         shortcut = split[0][1:]
         command = split[1].rstrip()
 
-        vgs["^%s$" % shortcut] = command
+        vgs[word(shortcut)] = command
 
     return vgs
 
