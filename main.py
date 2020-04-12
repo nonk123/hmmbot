@@ -64,7 +64,11 @@ class HmmBot(discord.Client):
     def respond(self, content):
         for response_regexp, response in respond_to.items():
             for match in re.findall(response_regexp, content, re.IGNORECASE):
-                yield response(content) if callable(response) else response
+                if callable(response):
+                    yield response(content)
+                    return
+                else:
+                    yield response
 
     async def on_message(self, message):
         if message.author.id == self.user.id:
