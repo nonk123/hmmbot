@@ -38,11 +38,11 @@ def pick(content):
         return "and what should i pick? (tm)"
 
     if "|" in choices:
-        choices = re.split(r" *\| *", choices)
+        choices = re.split(r"\s*\|\s*", choices)
     elif '"' in choices:
         choices = [s[1:-1] for s in re.findall(r'".*?"', choices)]
     else:
-        choices = re.split(",? +", choices)
+        choices = re.split(",\s*|\s+", choices)
 
     choice = "`%s`" % random.choice(choices)
     return random.choice(pick_phrases).format(choice)
