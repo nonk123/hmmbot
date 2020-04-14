@@ -57,7 +57,7 @@ respond_to = {
     r"^ping$": "pong!",
     r"^pong$": "ping?",
     r"^well([.?]*$|hr?m+$)": "well?",
-    word("hr?m+"): "hmm?",
+    r"^hr?m+\??$": "hmm?",
     word("me+h"): "meh.",
     word("he+m"): "hem.",
     r"^[ -/:-@\[-`{-~]+$": "?",
