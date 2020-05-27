@@ -20,11 +20,7 @@ pick_phrases = [
     "i think i'll go with... {}.",
     "hmm... {}, yes.",
     "{} is the most meh option out of these; repick.",
-    "definitely not {}.",
-    "repick.",
-    "meh.",
-    "hmm?",
-    "nope."
+    "definitely not {}."
 ]
 
 def pick(match):
@@ -44,8 +40,61 @@ def pick(match):
 
     return random.choice(pick_phrases).format(f"__{random.choice(choices)}__")
 
+def evaluate(expression):
+    tokens = {
+        r"(?P<dice>\d*)d(?P<sides>\d+)": die,
+        r"(?P<sign>[-+])?\s*(?P<number>\d+)": number
+    }
+
+    result = 0
+
+    remaining = expression
+
+    while remaining:
+        found = False
+
+        for token, handler in tokens.items():
+            match = re.search(r'^\s*' + token, remaining)
+
+            if not match:
+                continue
+
+            result += handler(match)
+            remaining = remaining[match.end():]
+            found = True
+
+            break
+
+        if not found:
+            raise ValueError("something's wrong with syntax, but what?")
+
+    return result
+
+def number(match):
+    if match["sign"] == "-":
+        sign = -1
+    elif match["sign"] == "+" or not match["sign"]:
+        sign = 1
+
+    return int(match["number"]) * sign
+
+def die(match):
+    sides = int(match["sides"])
+    dice = int(match["dice"] or 1)
+
+    return sum(random.randint(1, sides) for counter in range(dice))
+
+def roll(match):
+    try:
+        result = evaluate(match["expression"])
+    except ValueError as ex:
+        return f"hmm, doesn't compute: {str(ex)}"
+
+    return f"= {result}"
+
 respond_to = {
     fr"^bot(,\s*|,?\s+){pick_words}[^.?!]*:\s*(?P<choices>.*)$": pick,
+    r"^roll:\s*(?P<expression>.+)": roll,
     r"^test$": "test?",
     r"^well((,?\s+hr?m+)|[.?]*)$": "well?",
     r"^hr?m+\??$": "hmm?",
@@ -108,7 +157,10 @@ class HmmBot(discord.Client):
         if message.author.id == self.user.id:
             return
 
-        response = self.respond(message.content)
+        try:
+            response = self.respond(message.content)
+        except Exception as ex:
+            response = f"something's gone wrong: `{ex}`."
 
         if response:
             await message.channel.send(response)
