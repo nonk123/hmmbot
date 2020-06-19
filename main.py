@@ -19,8 +19,12 @@ pick_words = r"(choose|pick|select|decide\s+on)"
 pick_phrases = [
     "i think i'll go with... {}.",
     "hmm... {}, yes.",
-    "{} is the most meh option out of these; repick.",
-    "definitely not {}."
+    "let's say it's {}.",
+    "woody's got {}",
+    "according to pythagoras, {} sucks.",
+    "{} is meh.",
+    "definitely not {}.",
+    "let's not go with {}."
 ]
 
 def pick(match):
@@ -40,60 +44,78 @@ def pick(match):
 
     return random.choice(pick_phrases).format(f"__{random.choice(choices)}__")
 
+def die(match):
+    sides = int(match["sides"])
+
+    if sides > 10000:
+        raise ValueError("sorry, but that's a very **thicc** die")
+
+    dice = int(match["dice"] or 1)
+
+    if dice > 100:
+        raise ValueError("are you sure you need this many dice?")
+
+    return [random.randint(1, sides) for counter in range(dice)]
+
 def evaluate(expression):
+    if len(expression) > 50:
+        raise ValueError("I am **NOT** a calculator")
+
     tokens = {
         r"(?P<dice>\d*)d(?P<sides>\d+)": die,
-        r"(?P<sign>[-+])?\s*(?P<number>\d+)": number
+        r"-?\d+": lambda match: int(match[0])
     }
 
     result = 0
+    operands = []
 
     remaining = expression
 
     while remaining:
-        found = False
-
         for token, handler in tokens.items():
             match = re.search(r'^\s*' + token, remaining)
 
-            if not match:
-                continue
+            if match:
+                values = handler(match)
 
-            result += handler(match)
-            remaining = remaining[match.end():]
-            found = True
+                if isinstance(values, list):
+                    for value in values:
+                        result += value
+                        operands.append(value)
+                else:
+                    result += values
+                    operands.append(values)
 
-            break
+                remaining = remaining[match.end():]
 
-        if not found:
+                break
+        else:
             raise ValueError("something's wrong with syntax, but what?")
 
-    return result
-
-def number(match):
-    if match["sign"] == "-":
-        sign = -1
-    elif match["sign"] == "+" or not match["sign"]:
-        sign = 1
-
-    return int(match["number"]) * sign
-
-def die(match):
-    sides = int(match["sides"])
-    dice = int(match["dice"] or 1)
-
-    return sum(random.randint(1, sides) for counter in range(dice))
+    return result, operands
 
 def roll(match):
     try:
-        result = evaluate(match["expression"])
+        result, operands = evaluate(match["expression"])
     except ValueError as ex:
-        return f"hmm, doesn't compute: {str(ex)}"
+        return f"hmm, doesn't compute. {str(ex)}"
 
-    return f"= {result}"
+    if len(operands) <= 1:
+        return f"= {result}"
+
+    log = ""
+
+    for operand in operands:
+        if log:
+            log += " + " if operand >= 0 else " - "
+            log += str(abs(operand))
+        else:
+            log += str(operand)
+
+    return f"__{result}__ = {log}"
 
 respond_to = {
-    fr"^bot(,\s*|,?\s+){pick_words}[^.?!]*:\s*(?P<choices>.*)$": pick,
+    fr"^{pick_words}[^.?!]*:\s*(?P<choices>.*)$": pick,
     r"^roll:\s*(?P<expression>.+)": roll,
     r"^test$": "test?",
     r"^well((,?\s+hr?m+)|[.?]*)$": "well?",
@@ -160,9 +182,9 @@ class HmmBot(discord.Client):
         try:
             response = self.respond(message.content)
         except Exception as ex:
-            response = f"something's gone wrong: `{ex}`."
+            response = f"something went wrong: `{ex}`."
 
-        if response:
+        if response is not None:
             await message.channel.send(response)
 
 def main():
