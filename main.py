@@ -27,8 +27,12 @@ pick_phrases = [
     "let's not go with {}."
 ]
 
-def pick(match):
-    choices = match.group("choices")
+async def say(context):
+    await context["message"].delete()
+    return context["match"]["repeat"]
+
+async def pick(context):
+    choices = context["match"].group("choices")
 
     if not choices:
         return "and what should i pick? (tm)"
@@ -94,9 +98,9 @@ def evaluate(expression):
 
     return result, operands
 
-def roll(match):
+async def roll(context):
     try:
-        result, operands = evaluate(match["expression"])
+        result, operands = evaluate(context["match"]["expression"])
     except ValueError as ex:
         return f"hmm, doesn't compute. {str(ex)}"
 
@@ -116,6 +120,7 @@ def roll(match):
 
 respond_to = {
     fr"^{pick_words}[^.?!]*:\s*(?P<choices>.*)$": pick,
+    r"^say:\s*(?P<repeat>.+)": say,
     r"^roll:\s*(?P<expression>.+)": roll,
     r"^test$": "test?",
     r"^well((,?\s+hr?m+)|[.?]*)$": "well?",
@@ -142,10 +147,10 @@ def init_vgs():
 
         vgs_lines[shortcut] = command
 
-    def vgs(match):
+    async def vgs(context):
         responses = []
 
-        for shortcut in re.findall(match.re, match.string):
+        for shortcut in re.findall(context["match"].re, context["match"].string):
             shortcut = shortcut.upper()
 
             if shortcut in vgs_lines:
@@ -165,13 +170,16 @@ class HmmBot(discord.Client):
 
         print("Ready, I guess?")
 
-    def respond(self, content):
+    async def respond(self, message):
         for pattern, response in respond_to.items():
-            match = re.match(pattern, content, re.IGNORECASE)
+            match = re.match(pattern, message.content, re.IGNORECASE)
 
             if match:
                 if callable(response):
-                    return response(match)
+                    return await response({
+                        "message": message,
+                        "match": match
+                    })
                 else:
                     return response
 
@@ -180,7 +188,7 @@ class HmmBot(discord.Client):
             return
 
         try:
-            response = self.respond(message.content)
+            response = await self.respond(message)
         except Exception as ex:
             response = f"something went wrong: `{ex}`."
 
